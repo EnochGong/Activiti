@@ -48,17 +48,19 @@ public class ProcessEngineImpl implements ProcessEngine {
   protected ProcessEngineConfigurationImpl processEngineConfiguration;
 
   public ProcessEngineImpl(ProcessEngineConfigurationImpl processEngineConfiguration) {
-    this.processEngineConfiguration = processEngineConfiguration;
-    this.name = processEngineConfiguration.getProcessEngineName();
+    this.processEngineConfiguration = processEngineConfiguration;  // 流程引擎配置类实例
+    this.name = processEngineConfiguration.getProcessEngineName(); // 流程引擎的名称
+      // 初始化各种服务类实例
     this.repositoryService = processEngineConfiguration.getRepositoryService();
     this.runtimeService = processEngineConfiguration.getRuntimeService();
     this.historicDataService = processEngineConfiguration.getHistoryService();
     this.taskService = processEngineConfiguration.getTaskService();
     this.managementService = processEngineConfiguration.getManagementService();
     this.dynamicBpmnService = processEngineConfiguration.getDynamicBpmnService();
-    this.asyncExecutor = processEngineConfiguration.getAsyncExecutor();
-    this.commandExecutor = processEngineConfiguration.getCommandExecutor();
+    this.asyncExecutor = processEngineConfiguration.getAsyncExecutor(); // 异步作业执行器
+    this.commandExecutor = processEngineConfiguration.getCommandExecutor(); // 命令执行器
     this.sessionFactories = processEngineConfiguration.getSessionFactories();
+    // 事务上下文工厂类
     this.transactionContextFactory = processEngineConfiguration.getTransactionContextFactory();
 
     if (processEngineConfiguration.isUsingRelationalDatabase() && processEngineConfiguration.getDatabaseSchemaUpdate() != null) {
