@@ -27,9 +27,9 @@ import org.activiti.engine.impl.interceptor.CommandContext;
 public final class SchemaOperationsProcessEngineBuild implements Command<Object> {
 
   public Object execute(CommandContext commandContext) {
-    DbSqlSession dbSqlSession = commandContext.getDbSqlSession();
+    DbSqlSession dbSqlSession = commandContext.getDbSqlSession();  // commandContext会获取dbSqlSession的实例对象
     if (dbSqlSession != null) {
-      dbSqlSession.performSchemaOperationsProcessEngineBuild();
+      dbSqlSession.performSchemaOperationsProcessEngineBuild(); // 调用dbSqlSession实例对象的performSchemaOperationsProcessEngineBuild方法
     }
     return null;
   }

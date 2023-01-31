@@ -17,45 +17,8 @@
 
 package org.activiti.engine.impl.db;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.activiti.engine.ActivitiException;
-import org.activiti.engine.ActivitiOptimisticLockingException;
-import org.activiti.engine.ActivitiWrongDbException;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngineConfiguration;
-import org.activiti.engine.impl.DeploymentQueryImpl;
-import org.activiti.engine.impl.ExecutionQueryImpl;
-import org.activiti.engine.impl.HistoricActivityInstanceQueryImpl;
-import org.activiti.engine.impl.HistoricDetailQueryImpl;
-import org.activiti.engine.impl.HistoricProcessInstanceQueryImpl;
-import org.activiti.engine.impl.HistoricTaskInstanceQueryImpl;
-import org.activiti.engine.impl.HistoricVariableInstanceQueryImpl;
-import org.activiti.engine.impl.JobQueryImpl;
-import org.activiti.engine.impl.ModelQueryImpl;
-import org.activiti.engine.impl.Page;
-import org.activiti.engine.impl.ProcessDefinitionQueryImpl;
-import org.activiti.engine.impl.ProcessInstanceQueryImpl;
-import org.activiti.engine.impl.TaskQueryImpl;
+import org.activiti.engine.*;
+import org.activiti.engine.impl.*;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.db.upgrade.DbUpgradeStep;
@@ -70,6 +33,19 @@ import org.activiti.engine.impl.util.ReflectUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.*;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 public class DbSqlSession implements Session {
 
@@ -1439,12 +1415,13 @@ public class DbSqlSession implements Session {
         return false;
     }
 
+
     public void performSchemaOperationsProcessEngineBuild() {
-        String databaseSchemaUpdate = Context.getProcessEngineConfiguration().getDatabaseSchemaUpdate();
+        String databaseSchemaUpdate = Context.getProcessEngineConfiguration().getDatabaseSchemaUpdate();// 获取流程配置类中的DatabaseSchemaUpdate属性值
         log.debug("Executing performSchemaOperationsProcessEngineBuild with setting " + databaseSchemaUpdate);
-        if (ProcessEngineConfigurationImpl.DB_SCHEMA_UPDATE_DROP_CREATE.equals(databaseSchemaUpdate)) {
+        if (ProcessEngineConfigurationImpl.DB_SCHEMA_UPDATE_DROP_CREATE.equals(databaseSchemaUpdate)) { // 如果是这个属性drop-create
             try {
-                dbSchemaDrop();
+                dbSchemaDrop(); // 则就执行这个
             } catch (RuntimeException e) {
                 // ignore
             }

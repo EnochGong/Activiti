@@ -212,7 +212,7 @@ public abstract class ProcessEngineConfiguration {
   }
 
   public abstract ProcessEngine buildProcessEngine();
-
+    // 
   public static ProcessEngineConfiguration createProcessEngineConfigurationFromResourceDefault() {
     return createProcessEngineConfigurationFromResource("activiti.cfg.xml", "processEngineConfiguration");
   }

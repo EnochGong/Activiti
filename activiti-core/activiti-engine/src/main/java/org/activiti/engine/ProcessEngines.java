@@ -16,6 +16,12 @@
 
 package org.activiti.engine;
 
+import org.activiti.engine.impl.ProcessEngineInfoImpl;
+import org.activiti.engine.impl.util.IoUtil;
+import org.activiti.engine.impl.util.ReflectUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -23,20 +29,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.activiti.engine.impl.ProcessEngineInfoImpl;
-import org.activiti.engine.impl.util.IoUtil;
-import org.activiti.engine.impl.util.ReflectUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 /**
  * Helper for initializing and closing process engines in server environments. <br>
@@ -135,7 +128,7 @@ public abstract class ProcessEngines {
    * Registers the given process engine. No {@link ProcessEngineInfo} will be available for this process engine. An engine that is registered will be closed when the {@link ProcessEngines#destroy()}
    * is called.
    */
-  public static void registerProcessEngine(ProcessEngine processEngine) {
+  public static void registerProcessEngine(ProcessEngine processEngine) { // 仅仅是注册流程实例引擎对象，直接将processEngine实例对象添加到 processEngines 类中的processEngines的集合当中。
     processEngines.put(processEngine.getName(), processEngine);
   }
 

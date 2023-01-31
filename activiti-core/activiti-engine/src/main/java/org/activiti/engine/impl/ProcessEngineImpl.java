@@ -48,6 +48,9 @@ public class ProcessEngineImpl implements ProcessEngine {
   protected ProcessEngineConfigurationImpl processEngineConfiguration;
 
   public ProcessEngineImpl(ProcessEngineConfigurationImpl processEngineConfiguration) {
+      /**
+       *  对象的属性值都是从processEngineConfiguration中得到，（门面模式）的设计模式
+       */
     this.processEngineConfiguration = processEngineConfiguration;  // 流程引擎配置类实例
     this.name = processEngineConfiguration.getProcessEngineName(); // 流程引擎的名称
       // 初始化各种服务类实例
@@ -64,6 +67,7 @@ public class ProcessEngineImpl implements ProcessEngine {
     this.transactionContextFactory = processEngineConfiguration.getTransactionContextFactory();
 
     if (processEngineConfiguration.isUsingRelationalDatabase() && processEngineConfiguration.getDatabaseSchemaUpdate() != null) {
+        // 执行数据库表生成策略，
       commandExecutor.execute(processEngineConfiguration.getSchemaCommandConfig(), new SchemaOperationsProcessEngineBuild());
     }
 
@@ -72,7 +76,7 @@ public class ProcessEngineImpl implements ProcessEngine {
     } else {
       log.info("ProcessEngine {} created", name);
     }
-
+    // 从一下过程：上文提到的流程引擎对象构造完毕。，会将自身的信息注册到流程引擎管理类中去
     ProcessEngines.registerProcessEngine(this);
 
     if (asyncExecutor != null && asyncExecutor.isAutoActivate()) {
@@ -85,19 +89,19 @@ public class ProcessEngineImpl implements ProcessEngine {
 
     processEngineConfiguration.getEventDispatcher().dispatchEvent(ActivitiEventBuilder.createGlobalEvent(ActivitiEventType.ENGINE_CREATED));
   }
-
+    // 流程引擎的注销过程
   public void close() {
     ProcessEngines.unregister(this);
-    if (asyncExecutor != null && asyncExecutor.isActive()) {
+    if (asyncExecutor != null && asyncExecutor.isActive()) {  // 如果流程引擎配置了 异步作业器，则需要关闭作业执行器
       asyncExecutor.shutdown();
     }
-
+    // 执行 SchemaOperationProcessEngineClose 的命令
     commandExecutor.execute(processEngineConfiguration.getSchemaCommandConfig(), new SchemaOperationProcessEngineClose());
-
+    // 如果流程引擎配置类配置了流程引擎的生命周期监听器，则触发流程引擎生命周期的监听器中的onProcessEngineClosed方法。
     if (processEngineConfiguration.getProcessEngineLifecycleListener() != null) {
       processEngineConfiguration.getProcessEngineLifecycleListener().onProcessEngineClosed(this);
     }
-
+    // 转发 ENGINE_CLOSED 事件。
     processEngineConfiguration.getEventDispatcher().dispatchEvent(ActivitiEventBuilder.createGlobalEvent(ActivitiEventType.ENGINE_CLOSED));
   }
 
