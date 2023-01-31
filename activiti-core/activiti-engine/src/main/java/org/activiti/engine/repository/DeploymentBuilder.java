@@ -16,14 +16,14 @@
 
 package org.activiti.engine.repository;
 
-import java.io.InputStream;
-import java.util.Date;
-import java.util.zip.ZipInputStream;
-
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.core.common.project.model.ProjectManifest;
 import org.activiti.engine.api.internal.Internal;
 import org.springframework.core.io.Resource;
+
+import java.io.InputStream;
+import java.util.Date;
+import java.util.zip.ZipInputStream;
 
 /**
  * Builder for creating new deployments.
@@ -37,20 +37,21 @@ import org.springframework.core.io.Resource;
  */
 @Internal
 public interface DeploymentBuilder {
-
+    // 通过 inputStream流的方式部署资源文件 ，流程文档的数据流，对应 ACT_GE_BYTEARRAY 表中BYTES_列。
+    // resourceName:资源名称，对应 ACT_GE_BYTEARRAY 表中NAME_列
   DeploymentBuilder addInputStream(String resourceName, InputStream inputStream);
 
   DeploymentBuilder addInputStream(String resourceName,
                                    Resource resource);
-
+    // 通过资源文件所在的 classpath 进行部署
   DeploymentBuilder addClasspathResource(String resource);
-
+    // 通过字符串的方式 进行部署
   DeploymentBuilder addString(String resourceName, String text);
 
   DeploymentBuilder addBytes(String resourceName, byte[] bytes);
-
+    // 通过 ZipInputStream 流部署
   DeploymentBuilder addZipInputStream(ZipInputStream zipInputStream);
-
+    // 通过 BpmnModel的方式进行部署
   DeploymentBuilder addBpmnModel(String resourceName, BpmnModel bpmnModel);
 
   DeploymentBuilder setProjectManifest(ProjectManifest projectManifest);
@@ -108,7 +109,7 @@ public interface DeploymentBuilder {
   DeploymentBuilder deploymentProperty(String propertyKey, Object propertyValue);
 
   /**
-   * Deploys all provided sources to the Activiti engine.
+   * Deploys all provided sources to the Activiti engine. 根据提供的部署方式进行资源部署
    */
   Deployment deploy();
 
