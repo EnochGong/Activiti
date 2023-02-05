@@ -15,90 +15,35 @@
  */
 package org.activiti.bpmn.converter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.xml.XMLConstants;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.stax.StAXSource;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
 import org.activiti.bpmn.constants.BpmnXMLConstants;
 import org.activiti.bpmn.converter.alfresco.AlfrescoStartEventXMLConverter;
 import org.activiti.bpmn.converter.alfresco.AlfrescoUserTaskXMLConverter;
 import org.activiti.bpmn.converter.child.DocumentationParser;
 import org.activiti.bpmn.converter.child.IOSpecificationParser;
 import org.activiti.bpmn.converter.child.multi.instance.MultiInstanceParser;
-import org.activiti.bpmn.converter.export.ActivitiListenerExport;
-import org.activiti.bpmn.converter.export.BPMNDIExport;
-import org.activiti.bpmn.converter.export.CollaborationExport;
-import org.activiti.bpmn.converter.export.DataStoreExport;
-import org.activiti.bpmn.converter.export.DefinitionsRootExport;
-import org.activiti.bpmn.converter.export.ErrorExport;
-import org.activiti.bpmn.converter.export.MultiInstanceExport;
-import org.activiti.bpmn.converter.export.ProcessExport;
-import org.activiti.bpmn.converter.export.SignalAndMessageDefinitionExport;
-import org.activiti.bpmn.converter.parser.BpmnEdgeParser;
-import org.activiti.bpmn.converter.parser.BpmnShapeParser;
-import org.activiti.bpmn.converter.parser.DataStoreParser;
-import org.activiti.bpmn.converter.parser.DefinitionsParser;
-import org.activiti.bpmn.converter.parser.ExtensionElementsParser;
-import org.activiti.bpmn.converter.parser.ImportParser;
-import org.activiti.bpmn.converter.parser.InterfaceParser;
-import org.activiti.bpmn.converter.parser.ItemDefinitionParser;
-import org.activiti.bpmn.converter.parser.LaneParser;
-import org.activiti.bpmn.converter.parser.MessageFlowParser;
-import org.activiti.bpmn.converter.parser.MessageParser;
-import org.activiti.bpmn.converter.parser.ParticipantParser;
-import org.activiti.bpmn.converter.parser.PotentialStarterParser;
-import org.activiti.bpmn.converter.parser.ProcessParser;
-import org.activiti.bpmn.converter.parser.ResourceParser;
-import org.activiti.bpmn.converter.parser.SignalParser;
-import org.activiti.bpmn.converter.parser.SubProcessParser;
+import org.activiti.bpmn.converter.export.*;
+import org.activiti.bpmn.converter.parser.*;
 import org.activiti.bpmn.converter.util.BpmnXMLUtil;
 import org.activiti.bpmn.converter.util.InputStreamProvider;
 import org.activiti.bpmn.exceptions.XMLException;
-import org.activiti.bpmn.model.Activity;
-import org.activiti.bpmn.model.AdhocSubProcess;
-import org.activiti.bpmn.model.Artifact;
-import org.activiti.bpmn.model.Association;
-import org.activiti.bpmn.model.BaseElement;
-import org.activiti.bpmn.model.BooleanDataObject;
-import org.activiti.bpmn.model.BoundaryEvent;
-import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.bpmn.model.DateDataObject;
-import org.activiti.bpmn.model.DoubleDataObject;
-import org.activiti.bpmn.model.EventSubProcess;
-import org.activiti.bpmn.model.FlowElement;
-import org.activiti.bpmn.model.FlowNode;
-import org.activiti.bpmn.model.IntegerDataObject;
-import org.activiti.bpmn.model.LongDataObject;
-import org.activiti.bpmn.model.Pool;
 import org.activiti.bpmn.model.Process;
-import org.activiti.bpmn.model.SequenceFlow;
-import org.activiti.bpmn.model.StringDataObject;
-import org.activiti.bpmn.model.SubProcess;
-import org.activiti.bpmn.model.TextAnnotation;
-import org.activiti.bpmn.model.Transaction;
+import org.activiti.bpmn.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
+import javax.xml.stream.*;
+import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.*;
 
 /**
 
@@ -461,6 +406,7 @@ public class BpmnXMLConverter implements BpmnXMLConstants {
       throw e;
 
     } catch (Exception e) {
+        // 从中学习什么：错误的日志打印
       LOGGER.error("Error processing BPMN document", e);
       throw new XMLException("Error processing BPMN document", e);
     }

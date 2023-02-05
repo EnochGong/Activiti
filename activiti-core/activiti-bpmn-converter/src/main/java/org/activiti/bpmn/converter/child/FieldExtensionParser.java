@@ -15,17 +15,11 @@
  */
 package org.activiti.bpmn.converter.child;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.activiti.bpmn.converter.util.BpmnXMLUtil;
-import org.activiti.bpmn.model.ActivitiListener;
-import org.activiti.bpmn.model.BaseElement;
-import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.bpmn.model.FieldExtension;
-import org.activiti.bpmn.model.MessageEventDefinition;
-import org.activiti.bpmn.model.SendTask;
-import org.activiti.bpmn.model.ServiceTask;
+import org.activiti.bpmn.model.*;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.xml.stream.XMLStreamReader;
 
 /**
 
@@ -36,7 +30,7 @@ public class FieldExtensionParser extends BaseChildElementParser {
     return ELEMENT_FIELD;
   }
 
-  public boolean accepts(BaseElement element) {
+  public boolean accepts(BaseElement element) { // 该方法决定监听器是否可以加到父元素
     return ((element instanceof ActivitiListener)
             || (element instanceof ServiceTask)
             || (element instanceof SendTask)
@@ -45,10 +39,10 @@ public class FieldExtensionParser extends BaseChildElementParser {
 
   public void parseChildElement(XMLStreamReader xtr, BaseElement parentElement, BpmnModel model) throws Exception {
 
-    if (!accepts(parentElement))
+    if (!accepts(parentElement)) // 通过调用 accept方法验证field 元素是否可以进行解析
       return;
 
-    FieldExtension extension = new FieldExtension();
+    FieldExtension extension = new FieldExtension(); // activiti ： field 元素的承载类
     BpmnXMLUtil.addXMLLocation(extension, xtr);
     extension.setFieldName(xtr.getAttributeValue(null, ATTRIBUTE_FIELD_NAME));
 

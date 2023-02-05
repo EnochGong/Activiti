@@ -15,25 +15,15 @@
  */
 package org.activiti.bpmn.converter.util;
 
-import java.text.StringCharacterIterator;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import javax.xml.stream.Location;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.activiti.bpmn.constants.BpmnXMLConstants;
 import org.activiti.bpmn.converter.child.*;
-import org.activiti.bpmn.converter.child.MessageEventDefinitionParser;
 import org.activiti.bpmn.converter.child.multi.instance.MultiInstanceParser;
 import org.activiti.bpmn.model.*;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.xml.stream.*;
+import java.text.StringCharacterIterator;
+import java.util.*;
 
 public class BpmnXMLUtil implements BpmnXMLConstants {
 
@@ -128,26 +118,26 @@ public class BpmnXMLUtil implements BpmnXMLConstants {
   }
 
   public static ExtensionElement parseExtensionElement(XMLStreamReader xtr) throws Exception {
-    ExtensionElement extensionElement = new ExtensionElement();
-    extensionElement.setName(xtr.getLocalName());
+    ExtensionElement extensionElement = new ExtensionElement();  // 实例化扩展元素的继承类
+    extensionElement.setName(xtr.getLocalName());  // 获取元素名称
     if (StringUtils.isNotEmpty(xtr.getNamespaceURI())) {
-      extensionElement.setNamespace(xtr.getNamespaceURI());
+      extensionElement.setNamespace(xtr.getNamespaceURI());  // 获取元素的命名空间
     }
     if (StringUtils.isNotEmpty(xtr.getPrefix())) {
-      extensionElement.setNamespacePrefix(xtr.getPrefix());
+      extensionElement.setNamespacePrefix(xtr.getPrefix()); // 获取元素的命名空间的前缀
     }
 
-    for (int i = 0; i < xtr.getAttributeCount(); i++) {
-      ExtensionAttribute extensionAttribute = new ExtensionAttribute();
-      extensionAttribute.setName(xtr.getAttributeLocalName(i));
-      extensionAttribute.setValue(xtr.getAttributeValue(i));
+    for (int i = 0; i < xtr.getAttributeCount(); i++) { // 开始遍历元素的遍历值
+      ExtensionAttribute extensionAttribute = new ExtensionAttribute();  // 元素属性集成类
+      extensionAttribute.setName(xtr.getAttributeLocalName(i));  // 属性名称
+      extensionAttribute.setValue(xtr.getAttributeValue(i));   // 属性值
       if (StringUtils.isNotEmpty(xtr.getAttributeNamespace(i))) {
-        extensionAttribute.setNamespace(xtr.getAttributeNamespace(i));
+        extensionAttribute.setNamespace(xtr.getAttributeNamespace(i));  // 属性的命名空间
       }
       if (StringUtils.isNotEmpty(xtr.getAttributePrefix(i))) {
-        extensionAttribute.setNamespacePrefix(xtr.getAttributePrefix(i));
+        extensionAttribute.setNamespacePrefix(xtr.getAttributePrefix(i)); // 属性的命名空间前缀
       }
-      extensionElement.addAttribute(extensionAttribute);
+      extensionElement.addAttribute(extensionAttribute); // 将extensionAttribute设置到extensionElement中
     }
 
     boolean readyWithExtensionElement = false;
@@ -156,12 +146,12 @@ public class BpmnXMLUtil implements BpmnXMLConstants {
       if (xtr.isCharacters() || XMLStreamReader.CDATA == xtr.getEventType()) {
         if (StringUtils.isNotEmpty(xtr.getText().trim())) {
             if (StringUtils.isBlank(extensionElement.getElementText())) {
-                  extensionElement.setElementText(xtr.getText().trim());
+                  extensionElement.setElementText(xtr.getText().trim()); // 获取元素的内容
             } else {
                   extensionElement.setElementText(extensionElement.getElementText().concat(xtr.getText().trim()));
             }
         }
-      } else if (xtr.isStartElement()) {
+      } else if (xtr.isStartElement()) { // 如果自定义元素中存在子元素，需要解析子元素并将其解析结果添加到父元素中
         ExtensionElement childExtensionElement = parseExtensionElement(xtr);
         extensionElement.addChildElement(childExtensionElement);
       } else if (xtr.isEndElement() && extensionElement.getName().equalsIgnoreCase(xtr.getLocalName())) {
@@ -326,16 +316,16 @@ public class BpmnXMLUtil implements BpmnXMLConstants {
    */
   public static void addCustomAttributes(XMLStreamReader xtr, BaseElement element, List<ExtensionAttribute>... blackLists) {
     for (int i = 0; i < xtr.getAttributeCount(); i++) {
-      ExtensionAttribute extensionAttribute = new ExtensionAttribute();
-      extensionAttribute.setName(xtr.getAttributeLocalName(i));
-      extensionAttribute.setValue(xtr.getAttributeValue(i));
-      if (StringUtils.isNotEmpty(xtr.getAttributeNamespace(i))) {
+      ExtensionAttribute extensionAttribute = new ExtensionAttribute();  // 扩展属性
+      extensionAttribute.setName(xtr.getAttributeLocalName(i)); // 属性的名称
+      extensionAttribute.setValue(xtr.getAttributeValue(i));  // 属性的值
+      if (StringUtils.isNotEmpty(xtr.getAttributeNamespace(i))) {  // 命名空间
         extensionAttribute.setNamespace(xtr.getAttributeNamespace(i));
       }
-      if (StringUtils.isNotEmpty(xtr.getAttributePrefix(i))) {
+      if (StringUtils.isNotEmpty(xtr.getAttributePrefix(i))) { // 命名空间前缀
         extensionAttribute.setNamespacePrefix(xtr.getAttributePrefix(i));
       }
-      if (!isBlacklisted(extensionAttribute, blackLists)) {
+      if (!isBlacklisted(extensionAttribute, blackLists)) { // 黑名单校验
         element.addAttribute(extensionAttribute);
       }
     }
