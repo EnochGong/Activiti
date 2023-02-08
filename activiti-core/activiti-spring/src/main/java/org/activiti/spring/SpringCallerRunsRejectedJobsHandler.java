@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class SpringCallerRunsRejectedJobsHandler implements SpringRejectedJobsHandler {
 
   private static Logger log = LoggerFactory.getLogger(SpringCallerRunsRejectedJobsHandler.class);
-
+    // 主要是用来处理失败作业的
   public void jobRejected(AsyncExecutor asyncExecutor, Job job) {
     try {
       // execute rejected work in caller thread (potentially blocking job
